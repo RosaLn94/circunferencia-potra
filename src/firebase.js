@@ -9,7 +9,7 @@ const firebaseConfig = {
     projectId: "la-circunferencia-de-la-potra",
     storageBucket: "la-circunferencia-de-la-potra.firebasestorage.app",
     messagingSenderId: "156871671431",
-    appId: "1:156871671431:web:2e3ca3a364d208b8028222"
+    appId: "1:156871671431:web:4099e495cb0e2271028222"
 };
   
 const app = initializeApp(firebaseConfig)
