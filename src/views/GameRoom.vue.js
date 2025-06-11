@@ -1,6 +1,6 @@
 import { db } from '../firebase.js';
-import { ref as dbRef, onValue, set } from 'firebase/database';
-import { ref, onMounted } from 'vue';
+import { ref as dbRef, onValue, set, remove, onDisconnect } from 'firebase/database';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 const roomId = 'sala123';
 const userId = Math.random().toString(36).slice(2);
 const myName = prompt('Ingresa tu nombre');
@@ -8,13 +8,14 @@ const players = ref([]);
 const isSpinning = ref(false);
 const winner = ref(null);
 const myTurn = ref(false);
+const playerRef = dbRef(db, `rooms/${roomId}/players/${userId}`);
 const joinRoom = async () => {
-    const playerRef = dbRef(db, `rooms/${roomId}/players/${userId}`);
     await set(playerRef, { id: userId, name: myName });
+    onDisconnect(playerRef).remove();
     onValue(dbRef(db, `rooms/${roomId}/players`), snapshot => {
         const val = snapshot.val() || {};
         players.value = Object.values(val);
-        myTurn.value = Object.keys(val)[0] === userId; // turno simple
+        myTurn.value = Object.keys(val)[0] === userId;
     });
     onValue(dbRef(db, `rooms/${roomId}/spin`), snapshot => {
         const data = snapshot.val();
@@ -37,6 +38,9 @@ const spin = async () => {
 };
 onMounted(() => {
     joinRoom();
+});
+onBeforeUnmount(() => {
+    remove(playerRef);
 });
 debugger; /* PartiallyEnd: #3632/scriptSetup.vue */
 const __VLS_ctx = {};
